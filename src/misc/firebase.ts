@@ -3,21 +3,14 @@ import {
   enableIndexedDbPersistence,
   Firestore,
   getDoc,
-  getDocs,
-  limit,
-  QueryConstraint,
 } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import {
   collection,
   getFirestore,
-  query,
-  where,
   addDoc,
   doc,
-  onSnapshot,
   setDoc,
-  deleteDoc,
 } from "firebase/firestore";
 import {
   getAuth,
@@ -35,8 +28,6 @@ import { AnyObject } from "../models/AnyObject";
 import { firebaseConfig } from "./constants";
 import { updateSharedUser } from "./sharedState";
 
-export let token: any;
-
 function listenForAuthChanges() {
   const auth = getAuth(app);
   if (typeof window !== "undefined") {
@@ -47,7 +38,6 @@ function listenForAuthChanges() {
     auth,
     async (user) => {
       if (user) {
-        token = await user.getIdToken();
         updateSharedUser({
           name: user.displayName,
           email: user.email,
@@ -61,8 +51,8 @@ function listenForAuthChanges() {
   );
 }
 
-export let app: FirebaseApp;
-export let db: Firestore;
+let app: FirebaseApp;
+let db: Firestore;
 export function initializeFirebase() {
   try {
     app = initializeApp(firebaseConfig);
@@ -141,14 +131,6 @@ export async function resetPassword(email: string) {
 export async function signOut() {
   const auth = getAuth(app);
   await _signOut(auth);
-}
-
-export async function deleteDocument(document: Document) {
-  if (!document._collection) {
-    throw Error("Objects that extends Document must specify __collection");
-  }
-
-  await deleteDoc(doc(db, document._collection, document._id));
 }
 
 export async function getDocument<T extends Document>(

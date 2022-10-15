@@ -6,6 +6,7 @@ import { Countdown } from "../../models/Countdown";
 import { Loading } from "../Layout/Loading/Loading";
 import { sharedUser } from "../../misc/sharedState";
 import Link from "next/link";
+import Confetti from "react-confetti";
 
 const StyledMain = styled.header`
   padding: 30px;
@@ -60,6 +61,7 @@ const StyledUpdateWrap = styled.div`
 
 export const Main = () => {
   const [user] = sharedUser();
+  const [deadline, setDeadline] = useState<dayjs.Dayjs>(dayjs());
   const [targetDateReady, setTargetDateReady] = useState(false);
   const [daysRemaining, setDaysRemaining] = useState(0);
   const [hoursRemaining, setHoursRemaining] = useState(0);
@@ -70,6 +72,7 @@ export const Main = () => {
     let interval: any;
     Countdown.get().then((val) => {
       const targetDate = dayjs(val?.deadline.toDate());
+      setDeadline(targetDate);
       setTargetDateReady(true);
       function updateDates() {
         const currentDate = dayjs();
@@ -87,41 +90,58 @@ export const Main = () => {
     return () => clearInterval(interval);
   }, []);
 
+  function itHappened() {
+    return dayjs().isAfter(deadline);
+  }
+
   return (
     <StyledMain>
-      {targetDateReady ? (
+      {targetDateReady && !itHappened() ? (
         <>
           <StyledHeader>Our product will launch in</StyledHeader>
           <StyledRemaining>
-            <CountdownNumber
-              unit="day"
-              remaining={daysRemaining}
-            ></CountdownNumber>
-            <CountdownNumber
-              unit="hour"
-              remaining={hoursRemaining}
-            ></CountdownNumber>
-            <CountdownNumber
-              unit="minute"
-              remaining={minutesRemaining}
-            ></CountdownNumber>
+            {daysRemaining > 0 ? (
+              <CountdownNumber
+                unit="day"
+                remaining={daysRemaining}
+              ></CountdownNumber>
+            ) : null}
+            {daysRemaining > 0 || hoursRemaining > 0 ? (
+              <CountdownNumber
+                unit="hour"
+                remaining={hoursRemaining}
+              ></CountdownNumber>
+            ) : null}
+
+            {daysRemaining > 0 || hoursRemaining > 0 || minutesRemaining > 0 ? (
+              <CountdownNumber
+                unit="minute"
+                remaining={minutesRemaining}
+              ></CountdownNumber>
+            ) : null}
+
             <CountdownNumber
               unit="second"
               remaining={secondsRemaining}
             ></CountdownNumber>
           </StyledRemaining>
-          {user ? (
-            <StyledUpdateWrap>
-              <Link href="/updateCountdown" passHref>
-                <StyledUpdateLink>Update Countdown</StyledUpdateLink>
-              </Link>
-            </StyledUpdateWrap>
-          ) : (
-            <StyledInfo>Login to update the countdown.</StyledInfo>
-          )}
+        </>
+      ) : targetDateReady && itHappened() ? (
+        <>
+          <StyledHeader>Our product launched!</StyledHeader>
+          <Confetti />
         </>
       ) : (
         <Loading></Loading>
+      )}
+      {user && targetDateReady ? (
+        <StyledUpdateWrap>
+          <Link href="/updateCountdown" passHref>
+            <StyledUpdateLink>Update Countdown</StyledUpdateLink>
+          </Link>
+        </StyledUpdateWrap>
+      ) : (
+        <StyledInfo>Login to update the countdown.</StyledInfo>
       )}
     </StyledMain>
   );

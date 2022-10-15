@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { getDocument } from "../misc/firebase";
+import { getDocument, saveDocument } from "../misc/firebase";
 import type { AnyObject } from "./AnyObject";
 import { Document } from "./Document";
 
@@ -16,5 +16,12 @@ export class Countdown extends Document {
 
   static async get(): Promise<Countdown | null> {
     return await getDocument(Countdown, this.__collection, "only-one");
+  }
+
+  static async update(deadline: Timestamp): Promise<void> {
+    const existing = await this.get();
+    if (!existing) return;
+    existing.deadline = deadline;
+    await saveDocument(existing);
   }
 }
