@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { useRouter } from "next/router";
 import { sharedUser } from "../../misc/sharedState";
 import { signOut } from "../../misc/firebase";
@@ -24,7 +24,7 @@ const StyledArticle = styled.article`
   right: 2vw;
 `;
 
-const StyledLoginButton = styled.a`
+const StyledLoginButton = css`
   position: absolute;
   right: 0;
   cursor: pointer;
@@ -40,6 +40,12 @@ const StyledLoginButton = styled.a`
   :hover {
     filter: brightness(95%);
   }
+`;
+const StyledLoginLink = styled.a`
+  ${StyledLoginButton}
+`;
+const StyledLogoutNav = styled.nav`
+  ${StyledLoginButton}
 `;
 
 const StyledNav = styled.a`
@@ -59,6 +65,7 @@ export const Header = () => {
 
   function logout() {
     signOut();
+    router.push("/");
   }
 
   return (
@@ -91,12 +98,10 @@ export const Header = () => {
       {router.pathname !== "/login" ? (
         <StyledArticle>
           {user ? (
-            <StyledLoginButton onClick={logout} href="#">
-              Logout
-            </StyledLoginButton>
+            <StyledLogoutNav onClick={logout}>Logout</StyledLogoutNav>
           ) : (
             <Link href="/login" passHref>
-              <StyledLoginButton>Login</StyledLoginButton>
+              <StyledLoginLink>Login</StyledLoginLink>
             </Link>
           )}
         </StyledArticle>

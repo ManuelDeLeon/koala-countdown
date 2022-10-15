@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import styled from "styled-components";
+import { ChangeEvent, useContext, useState } from "react";
+import styled, { ThemeContext } from "styled-components";
 import { signIn } from "../../misc/firebase";
 import { isValidEmail } from "../../misc/functions";
 
@@ -77,11 +77,25 @@ export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
-  const emailError = !!email && !isValidEmail(email);
-  const passwordError = !!password && password.length < 10;
+  const [forceEmailError, setForceEmailError] = useState(false);
+  const [forcePasswordError, setForcePasswordError] = useState(false);
+  const emailError = forceEmailError || (!!email && !isValidEmail(email));
+  const passwordError =
+    forcePasswordError || (!!password && password.length < 10);
 
   const router = useRouter();
   function login() {
+    let failed = false;
+    if (!email || !isValidEmail(email)) {
+      setForceEmailError(true);
+      failed = true;
+    }
+    if (!password || password.length < 10) {
+      setForcePasswordError(true);
+      failed = true;
+    }
+    if (failed) return;
+
     signIn(email, password)
       .then(() => {
         router.push("/");
@@ -96,6 +110,19 @@ export const Login = () => {
         }
       });
   }
+  const theme = useContext(ThemeContext);
+
+  function updateEmail(e: ChangeEvent<HTMLInputElement>) {
+    setForceEmailError(false);
+    setEmail(e.target.value);
+    setLoginError("");
+  }
+
+  function updatePassword(e: ChangeEvent<HTMLInputElement>) {
+    setForcePasswordError(false);
+    setPassword(e.target.value);
+    setLoginError("");
+  }
 
   return (
     <StyledMain>
@@ -106,7 +133,12 @@ export const Login = () => {
             type="email"
             autoComplete="username"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={updateEmail}
+            style={{
+              borderColor: emailError
+                ? theme.global.error_color
+                : theme.global.success_color,
+            }}
           />
           {emailError ? (
             <StyledError>Please enter your email</StyledError>
@@ -118,7 +150,12 @@ export const Login = () => {
             type="password"
             autoComplete="current-password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={updatePassword}
+            style={{
+              borderColor: passwordError
+                ? theme.global.error_color
+                : theme.global.success_color,
+            }}
           />
           {passwordError ? (
             <StyledError>

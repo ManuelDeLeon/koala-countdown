@@ -140,7 +140,6 @@ export async function resetPassword(email: string) {
 export async function signOut() {
   const auth = getAuth(app);
   await _signOut(auth);
-  window.location.reload();
 }
 
 export async function deleteDocument(document: Document) {

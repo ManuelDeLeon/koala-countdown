@@ -107,11 +107,13 @@ export const CreateAccount = () => {
   function updateEmail(e: ChangeEvent<HTMLInputElement>) {
     setForceEmailError(false);
     setEmail(e.target.value);
+    setCreateError("");
   }
 
   function updatePassword(e: ChangeEvent<HTMLInputElement>) {
     setForcePasswordError(false);
     setPassword(e.target.value);
+    setCreateError("");
   }
 
   return (
