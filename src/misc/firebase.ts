@@ -2,6 +2,7 @@ import type { FirebaseApp } from "firebase/app";
 import {
   enableIndexedDbPersistence,
   Firestore,
+  getDoc,
   getDocs,
   limit,
   QueryConstraint,
@@ -150,21 +151,19 @@ export async function deleteDocument(document: Document) {
   await deleteDoc(doc(db, document._collection, document._id));
 }
 
-export async function searchDocument<T extends Document>(
+export async function getDocument<T extends Document>(
   type: { new (data: AnyObject): T },
   collectionPath: string,
-  search: AnyObject
+  id: string
 ): Promise<T | null> {
-  let ref = collection(db, collectionPath);
-  const wheres: Array<QueryConstraint> = [];
-  for (let indexMatch of Object.entries(search)) {
-    wheres.push(where(indexMatch[0], "==", indexMatch[1]));
+  const docRef = doc(db, collectionPath, id);
+  const dbDoc = await getDoc(docRef);
+
+  if (dbDoc.exists()) {
+    const document = new type(dbDoc.data());
+    document._id = dbDoc.id;
+    return document;
+  } else {
+    return null;
   }
-  const q = query(ref, limit(1), ...wheres);
-  const querySnapshot = await getDocs(q);
-  if (querySnapshot.empty) return null;
-  const dbDoc = querySnapshot.docs[0];
-  const document = new type(dbDoc.data());
-  document._id = dbDoc.id;
-  return document;
 }

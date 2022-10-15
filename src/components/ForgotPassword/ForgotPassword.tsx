@@ -103,6 +103,12 @@ export const ForgotPassword = () => {
       });
   };
 
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      reset();
+    }
+  }
+
   return (
     <StyledMain>
       <StyledForm>
@@ -113,6 +119,7 @@ export const ForgotPassword = () => {
             autoComplete="username"
             value={email}
             onChange={updateEmail}
+            onKeyDown={handleKeyDown}
             style={{
               borderColor: emailError
                 ? theme.global.error_color

@@ -1,12 +1,16 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { motion, AnimatePresence } from "framer-motion";
 import { CountdownNumber } from "./CountdownNumber/CountdownNumber";
+import { Countdown } from "../../models/Countdown";
+import { Loading } from "../Layout/Loading/Loading";
+import { sharedUser } from "../../misc/sharedState";
+import Link from "next/link";
 
 const StyledMain = styled.header`
   padding: 30px;
   background: ${(props) => props.theme.global.body_color};
+  text-align: center;
 `;
 
 const StyledHeader = styled.h1`
@@ -33,57 +37,92 @@ const StyledInfo = styled.p`
   margin-top: 100px;
 `;
 
-const StyledTimeBlock = styled.span`
-  margin: 1.5vw;
+const StyledUpdateLink = styled.a`
+  margin-top: 60px;
+  cursor: pointer;
+  text-decoration-line: none;
+  background-color: ${(props) => props.theme.global.success_color};
+  color: ${(props) => props.theme.global.body_color};
+  padding: 8px 16px;
+  font-style: normal;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 12px;
+  :hover {
+    filter: brightness(95%);
+  }
+`;
+
+const StyledUpdateWrap = styled.div`
+  margin-top: 100px;
 `;
 
 export const Main = () => {
-  const launchDate = dayjs().add(0, "days").add(3, "hours").add(5, "seconds");
-  const currentDate = dayjs();
-  const [daysRemaining, setDaysRemaining] = useState(
-    launchDate.diff(currentDate, "days")
-  );
-  const [hoursRemaining, setHoursRemaining] = useState(
-    launchDate.diff(currentDate, "hours") % 24
-  );
-  const [minutesRemaining, setMinutesRemaining] = useState(
-    launchDate.diff(currentDate, "minutes") % 60
-  );
-  const [secondsRemaining, setSecondsRemaining] = useState(
-    launchDate.diff(currentDate, "seconds") % 60
-  );
+  const [user] = sharedUser();
+  const [targetDateReady, setTargetDateReady] = useState(false);
+  const [daysRemaining, setDaysRemaining] = useState(0);
+  const [hoursRemaining, setHoursRemaining] = useState(0);
+  const [minutesRemaining, setMinutesRemaining] = useState(0);
+  const [secondsRemaining, setSecondsRemaining] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const currentDate = dayjs();
-      setDaysRemaining(launchDate.diff(currentDate, "days"));
-      setHoursRemaining(launchDate.diff(currentDate, "hours") % 24);
-      setMinutesRemaining(launchDate.diff(currentDate, "minutes") % 60);
-      setSecondsRemaining(launchDate.diff(currentDate, "seconds") % 60);
-    }, 500);
+    let interval: any;
+    Countdown.get().then((val) => {
+      const targetDate = dayjs(val?.deadline.toDate());
+      setTargetDateReady(true);
+      function updateDates() {
+        const currentDate = dayjs();
+        setDaysRemaining(targetDate.diff(currentDate, "days"));
+        setHoursRemaining(targetDate.diff(currentDate, "hours") % 24);
+        setMinutesRemaining(targetDate.diff(currentDate, "minutes") % 60);
+        setSecondsRemaining(targetDate.diff(currentDate, "seconds") % 60);
+      }
+      updateDates();
+      interval = setInterval(() => {
+        updateDates();
+      }, 500);
+    });
 
     return () => clearInterval(interval);
   }, []);
 
   return (
     <StyledMain>
-      <StyledHeader>Our product will launch in</StyledHeader>
-      <StyledRemaining>
-        <CountdownNumber
-          unit="hour"
-          remaining={hoursRemaining}
-        ></CountdownNumber>
-        <CountdownNumber unit="day" remaining={daysRemaining}></CountdownNumber>
-        <CountdownNumber
-          unit="minute"
-          remaining={minutesRemaining}
-        ></CountdownNumber>
-        <CountdownNumber
-          unit="second"
-          remaining={secondsRemaining}
-        ></CountdownNumber>
-      </StyledRemaining>
-      <StyledInfo>More info on how to update the countdown.</StyledInfo>
+      {targetDateReady ? (
+        <>
+          <StyledHeader>Our product will launch in</StyledHeader>
+          <StyledRemaining>
+            <CountdownNumber
+              unit="day"
+              remaining={daysRemaining}
+            ></CountdownNumber>
+            <CountdownNumber
+              unit="hour"
+              remaining={hoursRemaining}
+            ></CountdownNumber>
+            <CountdownNumber
+              unit="minute"
+              remaining={minutesRemaining}
+            ></CountdownNumber>
+            <CountdownNumber
+              unit="second"
+              remaining={secondsRemaining}
+            ></CountdownNumber>
+          </StyledRemaining>
+          {user ? (
+            <StyledUpdateWrap>
+              <Link href="/updateCountdown" passHref>
+                <StyledUpdateLink>Update Countdown</StyledUpdateLink>
+              </Link>
+            </StyledUpdateWrap>
+          ) : (
+            <StyledInfo>Login to update the countdown.</StyledInfo>
+          )}
+        </>
+      ) : (
+        <Loading></Loading>
+      )}
     </StyledMain>
   );
 };

@@ -116,6 +116,12 @@ export const CreateAccount = () => {
     setCreateError("");
   }
 
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      create();
+    }
+  }
+
   return (
     <StyledMain>
       <StyledForm>
@@ -143,6 +149,7 @@ export const CreateAccount = () => {
             autoComplete="current-password"
             value={password}
             onChange={updatePassword}
+            onKeyDown={handleKeyDown}
             style={{
               borderColor: passwordError
                 ? theme.global.error_color

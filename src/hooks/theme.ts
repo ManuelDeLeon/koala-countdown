@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { extractTheme } from "../misc/theme/theme";
+import { extractTheme } from "../misc/theme";
 import { Theme } from "../models/Theme";
 
 export function useTheme() {
