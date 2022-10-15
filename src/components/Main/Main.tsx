@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { motion, AnimatePresence } from "framer-motion";
+import { CountdownNumber } from "./CountdownNumber/CountdownNumber";
 
 const StyledMain = styled.header`
   padding: 30px;
@@ -67,18 +69,19 @@ export const Main = () => {
     <StyledMain>
       <StyledHeader>Our product will launch in</StyledHeader>
       <StyledRemaining>
-        <StyledTimeBlock>
-          {daysRemaining} day{daysRemaining === 1 ? "" : "s"}
-        </StyledTimeBlock>
-        <StyledTimeBlock>
-          {hoursRemaining} hour{hoursRemaining === 1 ? "" : "s"}
-        </StyledTimeBlock>
-        <StyledTimeBlock>
-          {minutesRemaining} minute{minutesRemaining === 1 ? "" : "s"}
-        </StyledTimeBlock>
-        <StyledTimeBlock>
-          {secondsRemaining} second{secondsRemaining === 1 ? "" : "s"}
-        </StyledTimeBlock>
+        <CountdownNumber
+          unit="hour"
+          remaining={hoursRemaining}
+        ></CountdownNumber>
+        <CountdownNumber unit="day" remaining={daysRemaining}></CountdownNumber>
+        <CountdownNumber
+          unit="minute"
+          remaining={minutesRemaining}
+        ></CountdownNumber>
+        <CountdownNumber
+          unit="second"
+          remaining={secondsRemaining}
+        ></CountdownNumber>
       </StyledRemaining>
       <StyledInfo>More info on how to update the countdown.</StyledInfo>
     </StyledMain>
