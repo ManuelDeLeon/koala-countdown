@@ -4,6 +4,7 @@ import { ChangeEvent, useContext, useState } from "react";
 import styled, { ThemeContext } from "styled-components";
 import { createAccount } from "../../misc/firebase";
 import { isValidEmail } from "../../misc/functions";
+import { useRouter } from "next/router";
 
 const StyledMain = styled.main`
   background-color: #f3fcff;
@@ -75,6 +76,7 @@ export const CreateAccount = () => {
   const passwordError =
     forcePasswordError || (!!password && password.length < 10);
 
+  const router = useRouter();
   const create = () => {
     let failed = false;
     if (!email || !isValidEmail(email)) {
@@ -87,13 +89,17 @@ export const CreateAccount = () => {
     }
     if (failed) return;
 
-    createAccount(email, password).catch((error: any) => {
-      if (error.code === "auth/email-already-in-use") {
-        setCreateError(`We already have an account with that email.`);
-      } else {
-        setCreateError(error.code);
-      }
-    });
+    createAccount(email, password)
+      .then(() => {
+        router.push("/");
+      })
+      .catch((error: any) => {
+        if (error.code === "auth/email-already-in-use") {
+          setCreateError(`We already have an account with that email.`);
+        } else {
+          setCreateError(error.code);
+        }
+      });
   };
 
   const theme = useContext(ThemeContext);

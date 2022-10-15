@@ -1,6 +1,7 @@
 // F3FCFF
 
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import styled from "styled-components";
 import { signIn } from "../../misc/firebase";
@@ -79,16 +80,21 @@ export const Login = () => {
   const emailError = !!email && !isValidEmail(email);
   const passwordError = !!password && password.length < 10;
 
+  const router = useRouter();
   function login() {
-    signIn(email, password).catch((error: any) => {
-      if (error.code === "auth/wrong-password") {
-        setLoginError("Wrong password.");
-      } else if (error.code === "auth/user-not-found") {
-        setLoginError("Email not found.");
-      } else {
-        setLoginError(error.code);
-      }
-    });
+    signIn(email, password)
+      .then(() => {
+        router.push("/");
+      })
+      .catch((error: any) => {
+        if (error.code === "auth/wrong-password") {
+          setLoginError("Wrong password.");
+        } else if (error.code === "auth/user-not-found") {
+          setLoginError("Email not found.");
+        } else {
+          setLoginError(error.code);
+        }
+      });
   }
 
   return (

@@ -42,6 +42,17 @@ const StyledLoginButton = styled.a`
   }
 `;
 
+const StyledNav = styled.a`
+  position: absolute;
+  left: 2vw;
+  font-size: 16px;
+  color: #062b38;
+  text-decoration-line: none;
+  :hover {
+    filter: brightness(85%);
+  }
+`;
+
 export const Header = () => {
   const router = useRouter();
   const [user] = sharedUser();
@@ -52,6 +63,12 @@ export const Header = () => {
 
   return (
     <StyledHeader>
+      <StyledNav
+        href="https://github.com/ManuelDeLeon/koala-countdown"
+        target="_blank"
+      >
+        Source Code
+      </StyledNav>
       <Link href="/" passHref>
         <StyledMain>
           <svg
