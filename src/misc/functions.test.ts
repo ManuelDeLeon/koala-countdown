@@ -1,4 +1,4 @@
-import { isValidEmail } from "../src/misc/functions";
+import { isValidEmail } from "./functions";
 
 describe("functions", () => {
   describe("isValidEmail", () => {

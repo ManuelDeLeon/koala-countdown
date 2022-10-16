@@ -1,17 +1,3 @@
-import type { FirebaseApp } from "firebase/app";
-import {
-  enableIndexedDbPersistence,
-  Firestore,
-  getDoc,
-} from "firebase/firestore";
-import { initializeApp } from "firebase/app";
-import {
-  collection,
-  getFirestore,
-  addDoc,
-  doc,
-  setDoc,
-} from "firebase/firestore";
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -19,9 +5,19 @@ import {
   sendPasswordResetEmail,
   signOut as _signOut,
   onIdTokenChanged,
-  setPersistence,
-  browserLocalPersistence,
 } from "firebase/auth";
+import { FirebaseApp } from "firebase/app";
+import {
+  collection,
+  getFirestore,
+  addDoc,
+  doc,
+  setDoc,
+  enableIndexedDbPersistence,
+  Firestore,
+  getDoc,
+} from "firebase/firestore";
+
 import type { Document } from "../models/Document";
 
 import { AnyObject } from "../models/AnyObject";
@@ -30,9 +26,6 @@ import { updateSharedUser } from "./sharedState";
 
 function listenForAuthChanges() {
   const auth = getAuth(app);
-  if (typeof window !== "undefined") {
-    setPersistence(auth, browserLocalPersistence);
-  }
 
   onIdTokenChanged(
     auth,
@@ -55,6 +48,8 @@ let app: FirebaseApp;
 let db: Firestore;
 export function initializeFirebase() {
   try {
+    // Jest hates firebase/app
+    const initializeApp = require("firebase/app").initializeApp;
     app = initializeApp(firebaseConfig);
 
     db = getFirestore(app);
@@ -99,10 +94,6 @@ export async function saveDocument(document: Document) {
 
 export async function signIn(email: string, password: string) {
   const auth = getAuth(app);
-  if (typeof window !== "undefined") {
-    await setPersistence(auth, browserLocalPersistence);
-  }
-
   const userCredential = await signInWithEmailAndPassword(
     auth,
     email,
@@ -112,9 +103,6 @@ export async function signIn(email: string, password: string) {
 
 export async function createAccount(email: string, password: string) {
   const auth = getAuth(app);
-  if (typeof window !== "undefined") {
-    await setPersistence(auth, browserLocalPersistence);
-  }
 
   const userCredential = await createUserWithEmailAndPassword(
     auth,
