@@ -99,13 +99,14 @@ export const Main = () => {
       {targetDateReady && !itHappened() ? (
         <>
           <StyledHeader>Our product will launch in</StyledHeader>
-          <StyledRemaining>
+          <StyledRemaining title="Time Remaining">
             {daysRemaining > 0 ? (
               <CountdownNumber
                 unit="day"
                 remaining={daysRemaining}
               ></CountdownNumber>
             ) : null}
+
             {daysRemaining > 0 || hoursRemaining > 0 ? (
               <CountdownNumber
                 unit="hour"
