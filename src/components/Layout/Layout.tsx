@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import styled, { ThemeProvider } from "styled-components";
 import { Normalize } from "styled-normalize";
 import { useTheme } from "../../hooks/theme";
-import { Footer } from "../Footer/Footer";
 import { Header } from "../Header/Header";
 import Head from "next/head";
 import { Loading } from "./Loading/Loading";
@@ -29,7 +28,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <StyledMain>
           <Header />
           {children}
-          <Footer />
         </StyledMain>
       </ThemeProvider>
     </React.StrictMode>

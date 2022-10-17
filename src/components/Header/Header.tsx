@@ -77,7 +77,7 @@ export const Header = () => {
         Source Code
       </StyledNav>
       <Link href="/" passHref>
-        <StyledMain>
+        <StyledMain title="Koala Countdown">
           <svg
             width="181"
             height="24"
