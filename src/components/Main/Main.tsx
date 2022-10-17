@@ -24,7 +24,7 @@ const StyledHeader = styled.h1`
 `;
 
 const StyledRemaining = styled(StyledHeader)`
-  font-size: 4.5vw;
+  font-size: 4vw;
 `;
 
 const StyledInfo = styled.p`
