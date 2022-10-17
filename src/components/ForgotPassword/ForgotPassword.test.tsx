@@ -93,7 +93,7 @@ describe("ForgotPassword", () => {
 
       test("Show instructions", () => {
         const instructions = screen.getByText(
-          "We just sent you an email to reset your password. (check Spam folder too)"
+          "We just sent you an email to reset your password. (check Spam folder)"
         );
         expect(instructions).toBeTruthy();
       });
