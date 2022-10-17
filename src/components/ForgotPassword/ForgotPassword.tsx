@@ -89,7 +89,9 @@ export const ForgotPassword = () => {
 
     resetPassword(email)
       .then(() => {
-        setResetError("We just sent you an email to reset your password.");
+        setResetError(
+          "We just sent you an email to reset your password. (check Spam folder too)"
+        );
         setTimeout(() => {
           router.push("/login");
         }, 20000);

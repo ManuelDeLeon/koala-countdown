@@ -30,7 +30,7 @@ const StyledMain = styled.main`
 export function Loading() {
   return (
     <StyledMain>
-      <Image src="/Logo.png" alt="Loading..." />
+      <Image src="/Logo.png" alt="Loading..." width="416" height="244" />
     </StyledMain>
   );
 }

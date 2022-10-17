@@ -90,6 +90,13 @@ describe("ForgotPassword", () => {
       test("Doesn't immediately redirects", () => {
         expect(routerPush).not.toHaveBeenCalled();
       });
+
+      test("Show instructions", () => {
+        const instructions = screen.getByText(
+          "We just sent you an email to reset your password. (check Spam folder too)"
+        );
+        expect(instructions).toBeTruthy();
+      });
     });
 
     describe("Click Reset Password - simulate wait", () => {
