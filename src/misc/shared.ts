@@ -21,6 +21,7 @@ export function shared<T>(defaultValue: T) {
           const setterIdx = setters.indexOf(set);
           setters.splice(setterIdx, 1);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
 
       return [currentValue, updateFunction];

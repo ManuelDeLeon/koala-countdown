@@ -1,3 +1,4 @@
+import Image from "next/image";
 import styled, { keyframes } from "styled-components";
 
 const keyFramesMain = keyframes`
@@ -29,7 +30,7 @@ const StyledMain = styled.main`
 export function Loading() {
   return (
     <StyledMain>
-      <img src="/Logo.png" alt="Loading..." />
+      <Image src="/Logo.png" alt="Loading..." />
     </StyledMain>
   );
 }
